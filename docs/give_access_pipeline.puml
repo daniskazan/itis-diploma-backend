@@ -1,0 +1,29 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+actor Admin
+participant AdminFrontend
+participant ApplicationDjangoBackend
+
+database CompanyDB
+
+== Activate Grant ==
+Admin -> AdminFrontend: << Open Grant List Page with status: PENDING >>
+AdminFrontend --> Admin: << OK >>
+Admin -> AdminFrontend: << Choose grant and go to activate grant page>>
+AdminFrontend --> Admin: << OK >>
+Admin -> AdminFrontend: << Fill form with resource DSN and choose DDL command>>
+Admin -> AdminFrontend: << Submits form >>
+AdminFrontend -> ApplicationDjangoBackend: << Form submitted >>
+ApplicationDjangoBackend -> CompanyDB: << Run command >>
+alt result=True
+
+CompanyDB -> ApplicationDjangoBackend: << OK >>
+ApplicationDjangoBackend -> AdminFrontend: << HTTP 200 >>
+else result=False
+CompanyDB -> ApplicationDjangoBackend: << Error >>
+ApplicationDjangoBackend -> AdminFrontend: << HTTP 400 with error description >>
+end
+
+@enduml
