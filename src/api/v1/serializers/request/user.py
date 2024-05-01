@@ -1,11 +1,9 @@
 from datetime import datetime
 
-from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 
-from api.v1.serializers.response.team import TeamSerializer
 from api.v1.serializers.response.user import UserAcceptInviteResponseSerializer
 from core.models import User, InvitationToken
 from core.enums.user import UserInvitationStatusChoice

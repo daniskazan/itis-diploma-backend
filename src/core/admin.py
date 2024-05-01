@@ -21,11 +21,21 @@ from core.models import Team
 from core.models import Application
 from core.models import Grant
 from core.models import InvitationToken
-from core.models import CommandPattern
+from core.models import CommandPattern, CommandParameter, UserCommandParameter
 from core.services.grant import DatabaseCommandExecutor
 from core.services.mailing import EmailService
 from producer import producer, EventType
-from utils.security.hasher import Hashing
+from helpers.security.hasher import Hashing
+
+
+@admin.register(CommandParameter)
+class CommandParameterAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(UserCommandParameter)
+class UserCommandParameterAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(CommandPattern)

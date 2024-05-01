@@ -5,9 +5,8 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from api.filters.resource import ResourceFilter
+from api.v1.serializers.response.resource import ResourceSerializer
 from core.models import Resource, ResourceGroup
-from api.v1.serializers.request.resource import ResourceSerializer
 
 
 class ResourceViewSet(
@@ -16,7 +15,11 @@ class ResourceViewSet(
     filter_backends = [filters.SearchFilter]
     search_fields = ["resource_group__name", "name"]
     queryset = Resource.objects.all().order_by("id")
-    serializer_class = ResourceSerializer
+
+    def get_serializer_class(self):
+        if self.action in ("retrieve", "list"):
+            return ResourceSerializer
+        return ResourceSerializer
 
     @staticmethod
     def get_available_resource_names() -> list[dict[str, str]]:

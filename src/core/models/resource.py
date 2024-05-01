@@ -1,7 +1,7 @@
 from django.db import models
 
 from core.mixins import CreatedAtUpdatedAtMixin
-from utils.security.hasher import Hashing
+from helpers.security.hasher import Hashing
 
 
 class ResourceGroup(CreatedAtUpdatedAtMixin, models.Model):
@@ -34,7 +34,6 @@ class Resource(CreatedAtUpdatedAtMixin, models.Model):
 
     def full_clean(self, exclude=None, validate_unique=True, validate_constraints=True):
         if self.resource_url:
-            x = Hashing.encrypt(self.resource_url)
             self.resource_url = Hashing.encrypt(self.resource_url)
         return super().full_clean(
             exclude=exclude,

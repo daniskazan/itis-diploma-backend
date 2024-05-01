@@ -1,5 +1,3 @@
-from django.db import transaction
-from django.template.loader import render_to_string
 from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework import serializers
@@ -25,7 +23,6 @@ from api.v1.serializers.request.multitenancy import (
     TenantFullOutputSerializer,
 )
 from core.models import TenantCreationRequest, Tenant
-from core.services.mailing import EmailService
 from core.services.multitenancy import send_confirm_email_tenant_creation_request
 
 

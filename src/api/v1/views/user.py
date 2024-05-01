@@ -1,7 +1,6 @@
 import uuid
 from datetime import datetime, timedelta
 from django.db import transaction
-from drf_spectacular import openapi
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import status
@@ -20,7 +19,6 @@ from api.v1.serializers.request.user import (
     UserAcceptInviteSerializer,
 )
 from api.v1.serializers.response.user import (
-    UserRegistrationSerializerOutput,
     UserFullOutputSerializer,
 )
 from core.services.user import UserInviteService

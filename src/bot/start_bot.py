@@ -15,7 +15,7 @@ bot.
 """
 
 import logging
-
+from bot.utils import get_user_or_none, save_user
 from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import (
     Application,
@@ -35,7 +35,6 @@ sys.path.append(BASE_DIR)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
-from bot.utils import get_user_or_none, save_user
 
 # Enable logging
 logging.basicConfig(

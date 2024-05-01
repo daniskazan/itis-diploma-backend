@@ -1,4 +1,9 @@
 import json
+
+from producer import EventType, EXCHANGE_NAME
+from core.consume import create_grant_to_proccess
+from core.consume import update_application_status_after_creating_grant
+
 import sys
 import django
 import os
@@ -7,11 +12,6 @@ import pika
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 django.setup()
-
-
-from producer import EventType, EXCHANGE_NAME
-from core.consume import create_grant_to_proccess
-from core.consume import update_application_status_after_creating_grant
 
 
 class Consumer:

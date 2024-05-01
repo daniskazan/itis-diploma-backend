@@ -21,6 +21,10 @@ class Application(CreatedAtUpdatedAtMixin, models.Model):
     scope = models.IntegerField(
         choices=ApplicationScopeChoice, default=ApplicationScopeChoice.READ_SCOPE
     )
+    payload = models.JSONField(help_text="Параметры команды", default=dict)
+    command = models.ForeignKey(
+        "CommandPattern", on_delete=models.RESTRICT, default=None
+    )
 
     class Meta:
         verbose_name = _("заявка")
