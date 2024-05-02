@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from rest_framework import status
 from api.v1.serializers.response.user import ConfirmApplicationByUserSerializer
 from core.models import User, Application
 
@@ -10,18 +12,18 @@ class CreateApplicationSerializer(serializers.ModelSerializer):
         model = Application
         fields = ["user", "resource", "scope", "payload", "command"]
 
-    # def validate(self, attrs):
-    #     if Application.objects.filter(
-    #         user=attrs["user"], resource=attrs["resource"]
-    #     ).exists():
-    #         raise ValidationError(
-    #             detail="Вы уже подавали заявку", code=status.HTTP_400_BAD_REQUEST
-    #         )
-    #     if not self.context["request"].user.team:
-    #         raise ValidationError(
-    #             detail="Вы не прикреплены к команде. Обратитесь к тимлиду", code=status.HTTP_400_BAD_REQUEST
-    #         )
-    #     return attrs
+    def validate(self, attrs):
+        if Application.objects.filter(
+            user=attrs["user"], resource=attrs["resource"]
+        ).exists():
+            raise ValidationError(
+                detail="Вы уже подавали заявку", code=status.HTTP_400_BAD_REQUEST
+            )
+        if not self.context["request"].user.team:
+            raise ValidationError(
+                detail="Вы не прикреплены к команде. Обратитесь к тимлиду.", code=status.HTTP_400_BAD_REQUEST
+            )
+        return attrs
 
     def fetch_team_lead(self) -> User:
         user = self.context["request"].user
