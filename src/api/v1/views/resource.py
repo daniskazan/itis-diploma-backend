@@ -14,7 +14,7 @@ class ResourceViewSet(
 ):
     filter_backends = [filters.SearchFilter]
     search_fields = ["resource_group__name", "name"]
-    queryset = Resource.objects.all().order_by("id")
+    queryset = Resource.objects.all().prefetch_related("scripts").order_by("id")
 
     def get_serializer_class(self):
         if self.action in ("retrieve", "list"):

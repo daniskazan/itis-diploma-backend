@@ -1,14 +1,13 @@
 from django.db import models
-from django.db.models.constraints import UniqueConstraint
 from core.mixins import CreatedAtUpdatedAtMixin
 
 
-class CommandPattern(CreatedAtUpdatedAtMixin, models.Model):
-    command_name = models.CharField(
-        help_text="Название команды", default="undefined", null=False, blank=False
+class Script(CreatedAtUpdatedAtMixin, models.Model):
+    script_name = models.CharField(
+        help_text="Название скрипта", default="undefined", null=False, blank=False
     )
     command_description = models.CharField(
-        help_text="Описание команды для пользователя",
+        help_text="Описание скрипта для пользователя",
         default="undefined",
         null=False,
         blank=False,
@@ -26,12 +25,20 @@ class CommandPattern(CreatedAtUpdatedAtMixin, models.Model):
         verbose_name_plural = "Шаблоны скриптов"
 
     def __str__(self):
-        return self.command_name
+        return self.script_name
 
 
 class CommandParameter(CreatedAtUpdatedAtMixin, models.Model):
     name = models.CharField(help_text="Название параметра")
     description = models.TextField(help_text="Описание параметра")
+    field_type = models.CharField(
+        default="text",
+        help_text="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input",
+    )
+    payload_field = models.CharField(
+        help_text="По какому ключу будет находиться параметр в payload`е заявки",
+        default="F",
+    )
 
     class Meta:
         verbose_name = "Параметр команды"
@@ -39,23 +46,3 @@ class CommandParameter(CreatedAtUpdatedAtMixin, models.Model):
 
     def __str__(self):
         return f"{self.__class__.__name__} ({self.name})"
-
-
-class UserCommandParameter(CreatedAtUpdatedAtMixin, models.Model):
-    user = models.ForeignKey("User", on_delete=models.CASCADE)
-    command_parameter = models.ForeignKey("CommandParameter", on_delete=models.CASCADE)
-    command_pattern = models.ForeignKey("CommandPattern", on_delete=models.CASCADE)
-    value = models.CharField()
-
-    class Meta:
-        verbose_name = "Параметр команды юзера"
-        verbose_name_plural = "Параметры команд юзера"
-        constraints = [
-            UniqueConstraint(
-                fields=["user", "command_parameter", "command_pattern"],
-                name="user_parameter_pattern_unique",
-            )
-        ]
-
-    def __str__(self):
-        return f"{self.__class__.__name__} ({self.user})"

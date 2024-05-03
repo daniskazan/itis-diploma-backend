@@ -21,7 +21,7 @@ from core.models import Team
 from core.models import Application
 from core.models import Grant
 from core.models import InvitationToken
-from core.models import CommandPattern, CommandParameter, UserCommandParameter
+from core.models import Script, CommandParameter
 from core.services.grant import DatabaseCommandExecutor
 from core.services.mailing import EmailService
 from producer import producer, EventType
@@ -33,14 +33,9 @@ class CommandParameterAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(UserCommandParameter)
-class UserCommandParameterAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(CommandPattern)
-class CommandAdmin(admin.ModelAdmin):
-    list_display = ("id", "command_name", "resource", "executing_pattern")
+@admin.register(Script)
+class ScriptAdmin(admin.ModelAdmin):
+    list_display = ("id", "script_name", "resource", "executing_pattern")
 
 
 @admin.register(Permission)
@@ -144,9 +139,10 @@ class GrantAdmin(admin.ModelAdmin):
         if "apply" in request.POST:
             form = ActivateGrantForm(request.POST)
             if form.is_valid():
-                cd = form.cleaned_data
                 db = DatabaseCommandExecutor(
-                    db_url=cd["db_url"], running_script=cd["command"], grant=grant
+                    db_url=Hashing.decrypt(message=grant.resource.resource_url),
+                    running_script=grant.application.script.executing_pattern,
+                    grant=grant,
                 )
                 try:
                     db.execute()
@@ -186,15 +182,10 @@ class ResourceAdmin(admin.ModelAdmin):
 
     def get_resource_url(self, obj: Resource):
         if obj.resource_url:
-            return Hashing.decrypt(obj.resource_url)
+            return Hashing.decrypt(bytes(obj.resource_url, encoding="utf-8"))
         return None
 
     get_resource_url.short_description = "Resource url"
-
-    def get_readonly_fields(self, request, obj=None):
-        if obj:
-            return self.readonly_fields + ("resource_url",)
-        return self.readonly_fields
 
 
 admin.site.register(UserRole)

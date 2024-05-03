@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from core.enums.application import ApplicationStatusChoice, ApplicationScopeChoice
+from core.enums.application import ApplicationStatusChoice
 from core.mixins import CreatedAtUpdatedAtMixin
 
 
@@ -18,13 +18,8 @@ class Application(CreatedAtUpdatedAtMixin, models.Model):
     status = models.IntegerField(
         choices=ApplicationStatusChoice, default=ApplicationStatusChoice.IN_PROCESS
     )
-    scope = models.IntegerField(
-        choices=ApplicationScopeChoice, default=ApplicationScopeChoice.READ_SCOPE
-    )
     payload = models.JSONField(help_text="Параметры команды", default=dict)
-    command = models.ForeignKey(
-        "CommandPattern", on_delete=models.RESTRICT, default=None
-    )
+    script = models.ForeignKey("Script", on_delete=models.RESTRICT, null=True)
 
     class Meta:
         verbose_name = _("заявка")
@@ -32,4 +27,4 @@ class Application(CreatedAtUpdatedAtMixin, models.Model):
         permissions = (("can_approve_application", "Can_approve_application"),)
 
     def __str__(self):
-        return f"Application #{self.pk}, User #{self.user_id}, Scopes - {self.get_scope_display()}"
+        return f"Application #{self.pk}, User #{self.user_id}"

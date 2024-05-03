@@ -7,7 +7,7 @@ from .team import Team
 from .application import Application
 from .resource import Resource, ResourceGroup
 from .grant import Grant
-from .command import CommandPattern, CommandParameter, UserCommandParameter
+from .command import Script, CommandParameter
 
 __all__ = [
     "User",
@@ -19,7 +19,7 @@ __all__ = [
     "ResourceGroup",
     "Grant",
     "InvitationToken",
-    "CommandPattern",
+    "Script",
     "UserCommandParameter",
     "CommandParameter",
     "TenantCreationRequest",

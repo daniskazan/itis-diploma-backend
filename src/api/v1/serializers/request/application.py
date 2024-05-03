@@ -10,7 +10,7 @@ class CreateApplicationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Application
-        fields = ["user", "resource", "scope", "payload", "command"]
+        fields = ["user", "resource", "payload", "script"]
 
     def validate(self, attrs):
         if Application.objects.filter(
@@ -21,7 +21,8 @@ class CreateApplicationSerializer(serializers.ModelSerializer):
             )
         if not self.context["request"].user.team:
             raise ValidationError(
-                detail="Вы не прикреплены к команде. Обратитесь к тимлиду.", code=status.HTTP_400_BAD_REQUEST
+                detail="Вы не прикреплены к команде. Обратитесь к тимлиду.",
+                code=status.HTTP_400_BAD_REQUEST,
             )
         return attrs
 
@@ -40,8 +41,7 @@ class FullApplicationSerializer(serializers.ModelSerializer):
     updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     resource = serializers.ReadOnlyField(source="resource.name")
     status = serializers.CharField(source="get_status_display")
-    scope = serializers.CharField(source="get_scope_display")
-    command = serializers.ReadOnlyField(source="command.command_description")
+    script = serializers.ReadOnlyField(source="script.command_description")
     confirm_by = ConfirmApplicationByUserSerializer()
 
     class Meta:

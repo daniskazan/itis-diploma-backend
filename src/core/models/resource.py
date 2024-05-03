@@ -21,8 +21,8 @@ class Resource(CreatedAtUpdatedAtMixin, models.Model):
     )
     resource_url = models.CharField(null=True, blank=True)
     name = models.CharField(max_length=256)
-    commands = models.ManyToManyField(
-        "CommandPattern", null=True, blank=True, related_name="resource_commands"
+    scripts = models.ManyToManyField(
+        "Script", null=True, blank=True, related_name="resource_commands"
     )
 
     def __str__(self):
