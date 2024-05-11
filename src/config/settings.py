@@ -28,8 +28,8 @@ ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
 
 RABBITMQ_SETTINGS = {
-    "HOST": os.environ.get("RABBITMQ_HOST", "localhost"),
-    "PORT": os.environ.get("RABBITMQ_PORT", 5672),
+    "RABBITMQ_HOST": os.environ.get("RABBITMQ_HOST", "localhost"),
+    "RABBITMQ_PORT": os.environ.get("RABBITMQ_PORT", 5672),
 }
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
@@ -178,7 +178,7 @@ DATABASES = {
         "USER": os.environ.get("DB_USER", "access"),
         "PASSWORD": os.environ.get("DB_PASSWORD", "access"),
         "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
-        "PORT": os.environ.get("DB_PORT", "5434"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
 

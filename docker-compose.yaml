@@ -1,6 +1,35 @@
 version: '3.0'
 
 services:
+  proxy:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+    networks:
+      - app-net
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+      - pg
+    environment:
+      - DB_HOST=pg
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+    networks:
+      - app-net
+
+
   pg:
     image: postgres:15.1-alpine
     volumes:
@@ -16,7 +45,8 @@ services:
       interval: 30s
       timeout: 3s
       retries: 3
-
+    networks:
+      - app-net
   redis:
     image: redis/redis-stack
     environment:
@@ -29,6 +59,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - app-net
     volumes:
     - ./infrastructure/redis/data:/data
 
@@ -38,3 +70,8 @@ services:
       - 5672:5672
       - 15672:15672
     restart: unless-stopped
+    networks:
+      - app-net
+
+networks:
+  app-net:

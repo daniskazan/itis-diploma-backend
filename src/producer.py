@@ -18,8 +18,8 @@ class Producer:
     def __init__(self):
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(
-                host=settings.RABBITMQ_SETTINGS["HOST"],
-                port=settings.RABBITMQ_SETTINGS["PORT"],
+                host=settings.RABBITMQ_SETTINGS["RABBITMQ_HOST"],
+                port=settings.RABBITMQ_SETTINGS["RABBITMQ_PORT"],
             )
         )
         self.channel = self.connection.channel()
