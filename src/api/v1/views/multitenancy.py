@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
-
+from django.db import transaction
 from api.permissions.tenant import IsTenantAdminPermission
 from api.v1.serializers.request.multitenancy import (
     TenantCreateCommand,
@@ -40,6 +40,7 @@ class TenantCreationRequestViewSet(mixins.CreateModelMixin, viewsets.GenericView
             return TenantCreationRequestValidateTokenCommand
         return TenantCreationRequestCommand
 
+    @transaction.atomic
     def create(self, request: Request, *args, **kwargs):
         serializer: serializers.ModelSerializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

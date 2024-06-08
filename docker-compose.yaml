@@ -1,16 +1,6 @@
 version: '3.0'
 
 services:
-  proxy:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    depends_on:
-      - api
-    ports:
-      - "80:80"
-    networks:
-      - app-net
   api:
     build:
       context: .
@@ -18,14 +8,17 @@ services:
     depends_on:
       - redis
       - pg
+      - rabbitmq
     environment:
       - DB_HOST=pg
+      - DB_PORT=5432
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
     ports:
       - "8000:8000"
     volumes:
       - ./:/app
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     networks:
       - app-net
 

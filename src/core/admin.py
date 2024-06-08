@@ -22,7 +22,7 @@ from core.models import Application
 from core.models import Grant
 from core.models import InvitationToken
 from core.models import Script, CommandParameter
-from core.services.grant import DatabaseCommandExecutor
+from core.services.grant import DatabaseCommandExecutor, CreateNewSSHConnectionServerConnector
 from core.services.mailing import EmailService
 from producer import producer, EventType
 from helpers.security.hasher import Hashing
@@ -77,7 +77,11 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 @admin.register(Grant)
 class GrantAdmin(admin.ModelAdmin):
-    actions = ("send_message", "activate_db_grant")
+    actions = (
+        "send_message",
+        "activate_db_grant",
+        "create_new_ssh_user_on_server"
+    )
     list_display = (
         "id",
         "status",
@@ -134,6 +138,25 @@ class GrantAdmin(admin.ModelAdmin):
 
     send_message.short_description = "Отправить сообщение"
 
+    def create_new_ssh_user_on_server(self, request: HttpRequest, queryset: QuerySet[Grant]):
+        grant = queryset.first()
+        connector = CreateNewSSHConnectionServerConnector(
+            server_ip=Hashing.decrypt(bytes(grant.resource.resource_url, encoding="utf-8")),
+            running_script=grant.application.script.executing_pattern,
+            connection_params={"username": "root", "password": "163900"},
+            grant=grant
+        )
+        try:
+            stdout = connector.execute()
+            self.message_user(request, f"Успешно: {stdout}", messages.SUCCESS)
+            return HttpResponseRedirect(request.get_full_path())
+        except Exception as e:
+            self.message_user(
+                request, f"Произошла ошибка: {e.args}", messages.ERROR
+            )
+
+    create_new_ssh_user_on_server.short_description = "Добавить новое SSH подключение"
+
     def activate_db_grant(self, request: HttpRequest, queryset: QuerySet[Grant]):
         grant = queryset.first()
         if "apply" in request.POST:
@@ -181,9 +204,10 @@ class ResourceAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "updated_at")
 
     def get_resource_url(self, obj: Resource):
+        resource_url = None
         if obj.resource_url:
-            return Hashing.decrypt(bytes(obj.resource_url, encoding="utf-8"))
-        return None
+            resource_url = Hashing.decrypt(bytes(obj.resource_url, encoding="utf-8"))
+        return resource_url
 
     get_resource_url.short_description = "Resource url"
 

@@ -9,7 +9,7 @@ class Hashing:
     @classmethod
     def encrypt(cls, message: str):
         encrypted_message = cls.__fernet.encrypt(message.encode())
-        return encrypted_message
+        return encrypted_message.decode()
 
     @classmethod
     def decrypt(cls, message: bytes) -> str:
