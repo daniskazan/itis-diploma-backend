@@ -44,6 +44,8 @@ class UserViewSet(
             return GetTokenStatusSerializer
         if self.action == "accept_invite":
             return UserAcceptInviteSerializer
+        if self.action == "invite":
+            return UserInviteSerializer
         return UserFullOutputSerializer
 
     @action(methods=["POST"], detail=False)

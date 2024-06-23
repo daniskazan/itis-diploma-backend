@@ -22,7 +22,7 @@ from core.models import Application
 from core.models import Grant
 from core.models import InvitationToken
 from core.models import Script, CommandParameter
-from core.services.grant import DatabaseCommandExecutor, CreateNewSSHConnectionServerConnector
+from core.services.grant import DatabaseCommandExecutor
 from core.services.mailing import EmailService
 from producer import producer, EventType
 from helpers.security.hasher import Hashing
@@ -137,25 +137,6 @@ class GrantAdmin(admin.ModelAdmin):
         )
 
     send_message.short_description = "Отправить сообщение"
-
-    def create_new_ssh_user_on_server(self, request: HttpRequest, queryset: QuerySet[Grant]):
-        grant = queryset.first()
-        connector = CreateNewSSHConnectionServerConnector(
-            server_ip=Hashing.decrypt(bytes(grant.resource.resource_url, encoding="utf-8")),
-            running_script=grant.application.script.executing_pattern,
-            connection_params={"username": "root", "password": "163900"},
-            grant=grant
-        )
-        try:
-            stdout = connector.execute()
-            self.message_user(request, f"Успешно: {stdout}", messages.SUCCESS)
-            return HttpResponseRedirect(request.get_full_path())
-        except Exception as e:
-            self.message_user(
-                request, f"Произошла ошибка: {e.args}", messages.ERROR
-            )
-
-    create_new_ssh_user_on_server.short_description = "Добавить новое SSH подключение"
 
     def activate_db_grant(self, request: HttpRequest, queryset: QuerySet[Grant]):
         grant = queryset.first()

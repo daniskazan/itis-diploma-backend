@@ -229,4 +229,4 @@ ENVIRONMENT = os.environ.get("ENVIRONMENT", "local")
 BASE_FRONTEND_HOST = os.environ.get("BASE_FRONTEND_HOST", "http://localhost:8081")
 SITE_ID_MAPPING = {"local": 1, "dev": 4, "staging": 2, "prod": 3}
 SITE_ID = SITE_ID_MAPPING.get(ENVIRONMENT, 1)
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "changeMe")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7092787873:AAGLgGBpBduKS4gQUnuIQcG07iET1ntRTZw")
