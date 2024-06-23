@@ -73,7 +73,7 @@ class ApplicationViewSet(
                     user_id=application.user.pk,
                     application_id=application.pk,
                     resource_id=application.resource.pk,
-                    scope=application.scope,
+                    scope=application.status,
                 )
             ),
         )

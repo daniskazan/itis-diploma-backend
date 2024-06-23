@@ -1,3 +1,4 @@
+from urllib.parse import urlparse
 from dataclasses import asdict
 from django.contrib import admin
 from django.contrib import messages
@@ -150,12 +151,24 @@ class GrantAdmin(admin.ModelAdmin):
                 )
                 try:
                     db.execute()
+                    db_url = urlparse(url=db.db_url)
+                    db_host, db_port = db_url.hostname, db_url.port
+
+                    EmailService.send_email(
+                        subject=f"Access for {grant.resource.name} is active.",
+                        message=f"DB host - {db_host}, DB url - {db_port}; Credentials - {grant.application.payload}",
+                        recipients_email=[grant.user.email],
+                    )
+                    TelegramBotNotifier(tenant=request.tenant).notify(
+                        user=grant.user, message=f"Access for {grant.resource.name} is active. Check your email."
+                    )
+
                     # Теперь все в порядке, перенаправляем пользователя на ту же страницу
                     self.message_user(request, "Успешно", messages.SUCCESS)
                     return HttpResponseRedirect(request.get_full_path())
                 except Exception as e:
                     self.message_user(
-                        request, f"Произошла ошибка: {e.args}", messages.ERROR
+                        request, f"Произошла ошибка {type(e)}: {e.args}, ", messages.ERROR
                     )
 
         # Если запрос не POST или форма не валидна, вернем пустую форму
